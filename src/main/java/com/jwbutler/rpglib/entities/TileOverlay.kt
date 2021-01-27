@@ -1,13 +1,14 @@
 package com.jwbutler.rpglib.entities
 
+import com.jwbutler.gameengine.graphics.Color
+import com.jwbutler.gameengine.graphics.ImageLoader
+import com.jwbutler.gameengine.graphics.PaletteSwaps
+import com.jwbutler.krpg.core.Singletons
 import com.jwbutler.rpglib.geometry.Coordinates
 import com.jwbutler.rpglib.graphics.RenderLayer
-import com.jwbutler.rpglib.graphics.images.Colors
-import com.jwbutler.rpglib.graphics.images.ImageLoader
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
+import com.jwbutler.krpg.graphics.Colors
 import com.jwbutler.rpglib.graphics.sprites.Sprite
 import com.jwbutler.rpglib.graphics.sprites.StaticSprite
-import java.awt.Color
 
 class TileOverlay(
     private val coordinates: Coordinates,
@@ -26,13 +27,12 @@ class TileOverlay(
 
     private fun _getSprite(): Sprite
     {
-        val paletteSwaps = PaletteSwaps(
-            OUTER_COLOR to outerColor,
-            INNER_COLOR to innerColor
-        )
+        val paletteSwaps = PaletteSwaps()
+            .put(OUTER_COLOR, outerColor)
+            .put(INNER_COLOR, innerColor)
 
         return StaticSprite(
-            ImageLoader.getInstance().loadImage("tiles/overlay_24x12", paletteSwaps),
+            Singletons.get(ImageLoader::class.java).loadImage("tiles/overlay_24x12", paletteSwaps),
             RenderLayer.FLOOR_TILE
         )
     }

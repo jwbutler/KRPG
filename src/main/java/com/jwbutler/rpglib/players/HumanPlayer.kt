@@ -1,9 +1,9 @@
 package com.jwbutler.rpglib.players
 
-import com.jwbutler.rpglib.graphics.GameWindow
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyListener
-import java.awt.event.MouseAdapter
+import com.jwbutler.gameengine.graphics.GameWindow
+import com.jwbutler.gameengine.input.KeyboardListener
+import com.jwbutler.gameengine.input.MouseListener
+import com.jwbutler.krpg.core.Singletons
 
 abstract class HumanPlayer : AbstractPlayer()
 {
@@ -12,10 +12,11 @@ abstract class HumanPlayer : AbstractPlayer()
     init
     {
         // IntelliJ doesn't like this but it seems ok
-        GameWindow.getInstance().addKeyListener(getKeyListener())
-        GameWindow.getInstance().addMouseListener(getMouseListener())
+        val gameWindow = Singletons.get(GameWindow::class.java)
+        gameWindow.setKeyboardListener(getKeyListener())
+        gameWindow.setMouseListener(getMouseListener())
     }
 
-    open fun getKeyListener(): KeyListener = object : KeyAdapter() {}
-    open fun getMouseListener(): MouseAdapter = object : MouseAdapter() {}
+    open fun getKeyListener(): KeyboardListener = object : KeyboardListener {}
+    open fun getMouseListener(): MouseListener = object : MouseListener {}
 }

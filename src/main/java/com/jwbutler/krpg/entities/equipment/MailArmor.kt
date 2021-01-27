@@ -1,9 +1,12 @@
 package com.jwbutler.krpg.entities.equipment
 
+import com.jwbutler.gameengine.graphics.PaletteSwaps
+import com.jwbutler.krpg.graphics.Colors
 import com.jwbutler.krpg.graphics.sprites.MailArmorSprite
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
 
-class MailArmor : AbstractEquipment(MailArmorSprite(PaletteSwaps.WHITE_TRANSPARENT))
+private val PALETTE_SWAPS = PaletteSwaps().withTransparentColor(Colors.WHITE)
+
+class MailArmor : AbstractEquipment(MailArmorSprite(PALETTE_SWAPS))
 {
     override val slot = RPGEquipmentSlot.CHEST
 }

@@ -1,5 +1,6 @@
 package com.jwbutler.krpg.core
 
+import com.jwbutler.gameengine.graphics.GameWindow
 import com.jwbutler.krpg.core.GameEngine.UnitData
 import com.jwbutler.rpglib.core.BoundSingletonHolder
 import com.jwbutler.rpglib.core.GameState
@@ -7,7 +8,6 @@ import com.jwbutler.rpglib.entities.equipment.Equipment
 import com.jwbutler.rpglib.entities.equipment.EquipmentSlot
 import com.jwbutler.rpglib.entities.units.Unit
 import com.jwbutler.rpglib.graphics.GameRenderer
-import com.jwbutler.rpglib.graphics.GameWindow
 import com.jwbutler.rpglib.levels.Level
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -71,8 +71,7 @@ private class GameEngineImpl : GameEngine
             {
                 synchronized(GameState.getInstance())
                 {
-                    GameRenderer.getInstance().render()
-                    GameWindow.getInstance().render()
+                    Singletons.get(GameWindow::class.java).render(GameRenderer.getInstance().render())
                 }
                 delay(RENDER_INTERVAL)
             }

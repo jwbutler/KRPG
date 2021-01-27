@@ -1,5 +1,6 @@
 package com.jwbutler.krpg.core
 
+import com.jwbutler.gameengine.geometry.Dimensions
 import com.jwbutler.krpg.behavior.RPGActivity
 import com.jwbutler.krpg.entities.TileOverlayFactory
 import com.jwbutler.krpg.graphics.ui.HUDRenderer
@@ -8,7 +9,6 @@ import com.jwbutler.rpglib.core.GameView
 import com.jwbutler.rpglib.entities.TileOverlay
 import com.jwbutler.rpglib.entities.units.Unit
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.geometry.Dimensions
 import com.jwbutler.rpglib.graphics.Renderable
 
 class KeyboardGameView : GameView

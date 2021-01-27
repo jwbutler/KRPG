@@ -1,5 +1,6 @@
 package com.jwbutler.rpglib.geometry
 
+import com.jwbutler.gameengine.geometry.Pixel
 import com.jwbutler.rpglib.core.GameView
 import com.jwbutler.rpglib.entities.Entity
 import kotlin.math.abs
@@ -28,8 +29,10 @@ fun manhattanDistance(first: Entity, second: Entity): Int
 fun coordinatesToPixel(coordinates: Coordinates): Pixel
 {
     val gameView = GameView.getInstance()
-    val (tileWidth, tileHeight) = gameView.tileDimensions
-    val (gameWidth, gameHeight) = gameView.gameDimensions
+    val tileWidth = gameView.tileDimensions.width
+    val tileHeight = gameView.tileDimensions.height
+    val gameWidth = gameView.gameDimensions.width
+    val gameHeight = gameView.gameDimensions.height
     val cameraCoordinates = gameView.getCameraCoordinates()
     val x = (coordinates.x - cameraCoordinates.x) * tileWidth + (gameWidth / 2) - (tileWidth/ 2)
     val y = (coordinates.y - cameraCoordinates.y) * tileHeight + (gameHeight / 2) - (tileHeight / 2)
@@ -41,8 +44,10 @@ fun coordinatesToPixel(coordinates: Coordinates): Pixel
 fun pixelToCoordinates(pixel: Pixel): Coordinates
 {
     val gameView = GameView.getInstance()
-    val (tileWidth, tileHeight) = gameView.tileDimensions
-    val (gameWidth, gameHeight) = gameView.gameDimensions
+    val tileWidth = gameView.tileDimensions.width
+    val tileHeight = gameView.tileDimensions.height
+    val gameWidth = gameView.gameDimensions.width
+    val gameHeight = gameView.gameDimensions.height
     val cameraCoordinates = gameView.getCameraCoordinates()
     val originTopLeft = Pixel(
         (gameWidth / 2) - (cameraCoordinates.x * tileWidth) - (tileWidth / 2),

@@ -1,5 +1,12 @@
 package com.jwbutler.krpg.players
 
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.graphics.GameWindow
+import com.jwbutler.gameengine.input.KeyboardKey
+import com.jwbutler.gameengine.input.KeyboardListener
+import com.jwbutler.gameengine.input.ModifierKey
+import com.jwbutler.gameengine.input.MouseButton
+import com.jwbutler.gameengine.input.MouseListener
 import com.jwbutler.krpg.behavior.RPGActivity
 import com.jwbutler.krpg.behavior.commands.BashCommand
 import com.jwbutler.krpg.behavior.commands.Command
@@ -9,6 +16,7 @@ import com.jwbutler.krpg.behavior.commands.RepeatingAttackCommand
 import com.jwbutler.krpg.behavior.commands.StayCommand
 import com.jwbutler.krpg.core.GameEngine
 import com.jwbutler.krpg.core.RPGGameView
+import com.jwbutler.krpg.core.Singletons
 import com.jwbutler.krpg.utils.getAverageCoordinates
 import com.jwbutler.krpg.utils.getPlayerUnits
 import com.jwbutler.krpg.utils.getUnitsInPixelRect
@@ -19,16 +27,8 @@ import com.jwbutler.rpglib.core.GameView
 import com.jwbutler.rpglib.entities.units.Unit
 import com.jwbutler.rpglib.geometry.Coordinates
 import com.jwbutler.rpglib.geometry.Direction
-import com.jwbutler.rpglib.geometry.Pixel
 import com.jwbutler.rpglib.geometry.pixelToCoordinates
-import com.jwbutler.rpglib.graphics.GameWindow
 import com.jwbutler.rpglib.players.HumanPlayer
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import javax.swing.SwingUtilities.isLeftMouseButton
-import javax.swing.SwingUtilities.isRightMouseButton
 
 private typealias CommandSupplier = (Unit) -> Command
 
@@ -62,45 +62,44 @@ class MousePlayer : HumanPlayer()
 
     fun getSelectedUnits() = selectedUnits
 
-    override fun getKeyListener() = object : KeyAdapter()
+    override fun getKeyListener() = object : KeyboardListener
     {
-        private val player = this@MousePlayer
-        override fun keyReleased(event: KeyEvent)
+        override fun keyUp(key: KeyboardKey, modifiers: Set<ModifierKey>)
         {
-            when (event.getKeyCode())
+            when (key)
             {
-                KeyEvent.VK_SPACE -> GameEngine.getInstance().togglePause()
-                KeyEvent.VK_ENTER ->
+                KeyboardKey.SPACE -> GameEngine.getInstance().togglePause()
+                KeyboardKey.ENTER ->
                 {
-                    if (event.isAltDown())
+                    if (modifiers.contains(ModifierKey.ALT))
                     {
-                        GameWindow.getInstance().toggleMaximized()
+                        Singletons.get(GameWindow::class.java).toggleMaximized()
                     }
                 }
-                KeyEvent.VK_A ->
+                KeyboardKey.A ->
                 {
-                    if (event.isControlDown())
+                    if (modifiers.contains(ModifierKey.CTRL))
                     {
                         selectedUnits.clear()
                         selectedUnits.addAll(getPlayerUnits())
                     }
                 }
-                KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3, KeyEvent.VK_4, KeyEvent.VK_5 ->
+                KeyboardKey.KEY_1, KeyboardKey.KEY_2, KeyboardKey.KEY_3, KeyboardKey.KEY_4, KeyboardKey.KEY_5 ->
                 {
-                    _handleNumberKey(event)
+                    _handleNumberKey(key, modifiers)
                 }
-                KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT ->
+                KeyboardKey.UP, KeyboardKey.DOWN, KeyboardKey.LEFT, KeyboardKey.RIGHT ->
                 {
-                    _handleMoveCamera(event)
+                    _handleMoveCamera(key, modifiers)
                 }
-                KeyEvent.VK_W ->
+                KeyboardKey.W ->
                 {
-                    if (event.isControlDown())
+                    if (modifiers.contains(ModifierKey.CTRL))
                     {
                         GameState.getInstance().getLevel().forceVictory = true
                     }
                 }
-                KeyEvent.VK_C ->
+                KeyboardKey.C ->
                 {
                     if (selectedUnits.isNotEmpty())
                     {
@@ -112,14 +111,21 @@ class MousePlayer : HumanPlayer()
             }
         }
 
-        private fun _handleNumberKey(event: KeyEvent)
+        private fun _handleNumberKey(key: KeyboardKey, modifiers: Set<ModifierKey>)
         {
-            val keyCode = event.getKeyCode()
-            val i = keyCode - KeyEvent.VK_1
+            val i = when(key)
+            {
+                KeyboardKey.KEY_1 -> 1
+                KeyboardKey.KEY_2 -> 2
+                KeyboardKey.KEY_3 -> 3
+                KeyboardKey.KEY_4 -> 4
+                KeyboardKey.KEY_5 -> 5
+                else -> throw RuntimeException()
+            }
             val playerUnits = getPlayerUnits()
             if (playerUnits.lastIndex >= i)
             {
-                if (event.isControlDown())
+                if (modifiers.contains(ModifierKey.CTRL))
                 {
                     val unit = playerUnits[i]
                     if (selectedUnits.contains(unit))
@@ -139,7 +145,7 @@ class MousePlayer : HumanPlayer()
             }
         }
 
-        private fun _handleMoveCamera(event: KeyEvent)
+        private fun _handleMoveCamera(key: KeyboardKey, modifiers: Set<ModifierKey>)
         {
             val view = GameView.getInstance() as RPGGameView
             val cameraCoordinates = view.getCameraCoordinates()
@@ -147,12 +153,12 @@ class MousePlayer : HumanPlayer()
 
             var (dx, dy) = Pair(0, 0)
 
-            when (event.getKeyCode())
+            when (key)
             {
-                KeyEvent.VK_UP    -> dy--
-                KeyEvent.VK_DOWN  -> dy++
-                KeyEvent.VK_LEFT  -> dx--
-                KeyEvent.VK_RIGHT -> dx++
+                KeyboardKey.UP    -> dy--
+                KeyboardKey.DOWN  -> dy++
+                KeyboardKey.LEFT  -> dx--
+                KeyboardKey.RIGHT -> dx++
                 else -> {}
             }
 
@@ -164,17 +170,16 @@ class MousePlayer : HumanPlayer()
         }
     }
 
-    override fun getMouseListener() = object : MouseAdapter()
+    override fun getMouseListener() = object : MouseListener
     {
-        override fun mousePressed(event: MouseEvent)
+        override fun mouseDown(pixel: Pixel, button: MouseButton, modifiers: Set<ModifierKey>)
         {
-            if (_isLeftClick(event))
+            if (_isLeftClick(button, modifiers))
             {
-                _getView().selectionStart = Pixel.fromPoint(event.getPoint())
+                _getView().selectionStart = pixel
             }
-            else if (_isRightClick(event))
+            else if (_isRightClick(button, modifiers))
             {
-                val pixel = Pixel.fromPoint(event.getPoint())
                 val coordinates = pixelToCoordinates(pixel)
                 if (GameState.getInstance().containsCoordinates(coordinates))
                 {
@@ -182,7 +187,7 @@ class MousePlayer : HumanPlayer()
                     {
                         val queuedCommand: CommandSupplier
 
-                        if (event.isControlDown())
+                        if (modifiers.contains(ModifierKey.CTRL))
                         {
                             queuedCommand = { u ->
                                 _tryBash(u, coordinates)
@@ -206,18 +211,18 @@ class MousePlayer : HumanPlayer()
             }
         }
 
-        override fun mouseDragged(event: MouseEvent)
+        override fun mouseDragged(pixel: Pixel, buttons: Set<MouseButton>)
         {
-            if (_isLeftClick(event))
+            if (buttons.contains(MouseButton.LEFT)) // TODO: check modifiers for consistency
             {
-                _getView().selectionEnd = Pixel.fromPoint(event.getPoint())
+                _getView().selectionEnd = pixel
             }
         }
 
-        override fun mouseReleased(event: MouseEvent)
+        override fun mouseUp(pixel: Pixel, button: MouseButton, modifiers: Set<ModifierKey>)
         {
             val view = _getView()
-            if (_isLeftClick(event))
+            if (_isLeftClick(button, modifiers))
             {
                 if (view.selectionStart != null && view.selectionEnd != null)
                 {
@@ -232,10 +237,10 @@ class MousePlayer : HumanPlayer()
             }
         }
 
-        override fun mouseClicked(event: MouseEvent)
+        override fun mouseClicked(pixel: Pixel, button: MouseButton, modifiers: Set<ModifierKey>)
         {
             val view = _getView()
-            if (_isLeftClick(event))
+            if (_isLeftClick(button, modifiers))
             {
                 view.selectionStart = null
                 view.selectionEnd = null
@@ -243,15 +248,15 @@ class MousePlayer : HumanPlayer()
             }
         }
 
-        private fun _isLeftClick(event: MouseEvent): Boolean
+        private fun _isLeftClick(button: MouseButton, modifiers: Set<ModifierKey>): Boolean
         {
-            return isLeftMouseButton(event) && !event.isControlDown()
+            return button == MouseButton.LEFT && !modifiers.contains(ModifierKey.CTRL)
         }
 
-        private fun _isRightClick(event: MouseEvent): Boolean
+        private fun _isRightClick(button: MouseButton, modifiers: Set<ModifierKey>): Boolean
         {
-            return isRightMouseButton(event)
-                || (isLeftMouseButton(event) && event.isControlDown())
+            return (button == MouseButton.RIGHT)
+                || (button == MouseButton.LEFT && modifiers.contains(ModifierKey.CTRL))
         }
     }
 

@@ -1,6 +1,6 @@
-package com.jwbutler.rpglib.graphics.images
+package com.jwbutler.krpg.graphics
 
-import java.awt.Color
+import com.jwbutler.gameengine.graphics.Color
 
 object Colors
 {

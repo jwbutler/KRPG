@@ -1,8 +1,8 @@
 package com.jwbutler.krpg.entities
 
+import com.jwbutler.gameengine.graphics.Color
 import com.jwbutler.rpglib.entities.TileOverlay
 import com.jwbutler.rpglib.geometry.Coordinates
-import java.awt.Color
 
 object TileOverlayFactory
 {

@@ -1,8 +1,8 @@
 package com.jwbutler.rpglib.core
 
+import com.jwbutler.gameengine.geometry.Dimensions
 import com.jwbutler.rpglib.entities.TileOverlay
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.geometry.Dimensions
 import com.jwbutler.rpglib.graphics.Renderable
 
 /**

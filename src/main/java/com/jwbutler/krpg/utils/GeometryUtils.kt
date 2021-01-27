@@ -1,9 +1,9 @@
 package com.jwbutler.krpg.utils
 
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.geometry.Rectangle
 import com.jwbutler.rpglib.core.GameState
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.geometry.Pixel
-import com.jwbutler.rpglib.geometry.Rectangle
 import java.awt.Point
 import kotlin.math.roundToInt
 
@@ -36,12 +36,12 @@ fun getAdjacentUnblockedCoordinates(coordinates: Coordinates): Set<Coordinates>
 
 fun rectFromPixels(first: Pixel, vararg rest: Pixel): Rectangle
 {
-    val rect = Rectangle(Point(first.x, first.y))
+    val rect = java.awt.Rectangle(Point(first.x, first.y))
     for (pixel in rest)
     {
         rect.add(pixel.x, pixel.y)
     }
-    return rect
+    return Rectangle(rect.x, rect.y, rect.width, rect.height)
 }
 
 fun getAverageCoordinates(coordinates: Collection<Coordinates>): Coordinates

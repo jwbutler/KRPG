@@ -74,7 +74,12 @@ internal class GameStateImpl : GameState
     override fun getEntities(): List<Entity>
     {
         val entities = entityToCoordinates.keys.toMutableList()
-        entities.addAll(unitToEquipment.values.flatMap { it.values })
+        val equipment = mutableListOf<Equipment>()
+        for (slotToEquipment in unitToEquipment.values)
+        {
+            equipment.addAll(slotToEquipment.values)
+        }
+        entities.addAll(equipment)
         return entities
     }
 

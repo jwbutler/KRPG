@@ -1,12 +1,13 @@
 package com.jwbutler.krpg.graphics.ui
 
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.geometry.Rectangle
+import com.jwbutler.gameengine.graphics.Image
 import com.jwbutler.krpg.utils.getPlayerUnits
 import com.jwbutler.rpglib.core.GameView
-import com.jwbutler.rpglib.geometry.Pixel
 import com.jwbutler.rpglib.graphics.RenderLayer
 import com.jwbutler.rpglib.graphics.Renderable
-import com.jwbutler.rpglib.graphics.images.Colors
-import com.jwbutler.rpglib.graphics.images.Image
+import com.jwbutler.krpg.graphics.Colors
 
 class HUDRenderer(width: Int, height: Int)
 {
@@ -30,15 +31,16 @@ class HUDRenderer(width: Int, height: Int)
             x += UnitCard.WIDTH + 5
         }
 
-        val (_, gameHeight) = GameView.getInstance().gameDimensions
+        val gameDimensions = GameView.getInstance().gameDimensions
         // TODO - layer is kind of superfluous here since it's getting added at the end
-        return Renderable(image, Pixel(0, gameHeight - HEIGHT), RenderLayer.UI_OVERLAY)
+        return Renderable(image, Pixel(0, gameDimensions.height - HEIGHT), RenderLayer.UI_OVERLAY)
     }
 
     private fun _renderBackground()
     {
-        val (gameWidth, _) = GameView.getInstance().gameDimensions
-        image.fillRect(0, 0, gameWidth - 1, HEIGHT - 1, Colors.BLACK)
-        image.drawRect(0, 0, gameWidth - 1, HEIGHT - 1, Colors.WHITE)
+        val gameDimensions = GameView.getInstance().gameDimensions
+        val gameWidth = gameDimensions.width
+        image.fillRect(Rectangle(0, 0, gameWidth - 1, HEIGHT - 1), Colors.BLACK)
+        image.drawRect(Rectangle(0, 0, gameWidth - 1, HEIGHT - 1), Colors.WHITE)
     }
 }

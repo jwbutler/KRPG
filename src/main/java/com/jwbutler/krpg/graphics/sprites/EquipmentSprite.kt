@@ -1,18 +1,21 @@
 package com.jwbutler.krpg.graphics.sprites
 
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.graphics.Image
+import com.jwbutler.gameengine.graphics.ImageLoader
+import com.jwbutler.gameengine.graphics.PaletteSwaps
 import com.jwbutler.krpg.behavior.RPGActivity
+import com.jwbutler.krpg.core.Singletons
 import com.jwbutler.krpg.graphics.sprites.units.PlayerSprite
 import com.jwbutler.rpglib.behavior.Activity
 import com.jwbutler.rpglib.entities.Entity
 import com.jwbutler.rpglib.entities.equipment.Equipment
 import com.jwbutler.rpglib.geometry.Direction
+import com.jwbutler.rpglib.geometry.IntPair
 import com.jwbutler.rpglib.geometry.Offsets
 import com.jwbutler.rpglib.graphics.FrameKey
 import com.jwbutler.rpglib.graphics.RenderLayer
 import com.jwbutler.rpglib.graphics.Renderable
-import com.jwbutler.rpglib.graphics.images.Image
-import com.jwbutler.rpglib.graphics.images.ImageLoader
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
 import com.jwbutler.rpglib.graphics.sprites.Sprite
 
 private const val BEHIND_PREFIX = "_B"
@@ -32,7 +35,7 @@ abstract class EquipmentSprite(private val spriteName: String, private val palet
         val frame = _getFrame(equipment)
         val filename = _formatFilename(frame)
         val (image, renderLayer) = _tryLoadBehindFirst(filename, paletteSwaps)
-        val pixel = entity.getCoordinates().toPixel() + offsets
+        val pixel = entity.getCoordinates().toPixel() + Pixel(offsets.x, offsets.y) // TODO
         return Renderable(image, pixel, renderLayer)
     }
 
@@ -59,7 +62,7 @@ abstract class EquipmentSprite(private val spriteName: String, private val palet
 
     private fun _tryLoadBehindFirst(filename: String, paletteSwaps: PaletteSwaps): Pair<Image, RenderLayer>
     {
-        val imageLoader = ImageLoader.getInstance()
+        val imageLoader = Singletons.get(ImageLoader::class.java)
         var image = imageLoader.loadOptional(filename + BEHIND_PREFIX, paletteSwaps)
         if (image != null)
         {

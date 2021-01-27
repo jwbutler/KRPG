@@ -1,5 +1,8 @@
 package com.jwbutler.krpg.players
 
+import com.jwbutler.gameengine.input.KeyboardKey
+import com.jwbutler.gameengine.input.KeyboardListener
+import com.jwbutler.gameengine.input.ModifierKey
 import com.jwbutler.krpg.behavior.RPGActivity
 import com.jwbutler.rpglib.behavior.Activity
 import com.jwbutler.rpglib.core.GameState
@@ -7,15 +10,13 @@ import com.jwbutler.rpglib.entities.units.Unit
 import com.jwbutler.rpglib.geometry.Coordinates
 import com.jwbutler.rpglib.geometry.Direction
 import com.jwbutler.rpglib.players.HumanPlayer
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import kotlin.math.abs
 
 class KeyboardPlayer : HumanPlayer()
 {
-    private val queuedDirections = mutableSetOf<Int>()
-    private val heldDirections = mutableSetOf<Int>()
-    private val heldModifiers = mutableSetOf<Int>()
+    private val queuedDirections = mutableSetOf<KeyboardKey>()
+    private val heldDirections = mutableSetOf<KeyboardKey>()
+    private val heldModifiers = mutableSetOf<KeyboardKey>()
 
     override fun chooseActivity(unit: Unit): Pair<Activity, Direction>
     {
@@ -25,10 +26,10 @@ class KeyboardPlayer : HumanPlayer()
         {
             when (directionKey)
             {
-                KeyEvent.VK_W -> dy--
-                KeyEvent.VK_A -> dx--
-                KeyEvent.VK_S -> dy++
-                KeyEvent.VK_D -> dx++
+                KeyboardKey.W -> dy--
+                KeyboardKey.A -> dx--
+                KeyboardKey.S -> dy++
+                KeyboardKey.D -> dx++
                 else -> {}
             }
         }
@@ -43,7 +44,8 @@ class KeyboardPlayer : HumanPlayer()
 
         if ((dx != 0 || dy != 0) && GameState.getInstance().containsCoordinates(coordinates))
         {
-            if (heldModifiers.contains(KeyEvent.VK_SHIFT) && unit.isActivityReady(RPGActivity.ATTACKING))
+            val isShiftDown = heldModifiers.contains(KeyboardKey.LEFT_SHIFT) || heldModifiers.contains(KeyboardKey.RIGHT_SHIFT)
+            if (isShiftDown && unit.isActivityReady(RPGActivity.ATTACKING))
             {
                 return Pair(RPGActivity.ATTACKING, Direction.from(dx, dy))
             }
@@ -55,38 +57,38 @@ class KeyboardPlayer : HumanPlayer()
         return Pair(RPGActivity.STANDING, unit.getDirection())
     }
 
-    override fun getKeyListener() = object : KeyAdapter()
+    override fun getKeyListener() = object : KeyboardListener
     {
-        override fun keyPressed(e: KeyEvent)
+        override fun keyDown(key: KeyboardKey, modifiers: Set<ModifierKey>)
         {
-            when (e.keyCode)
+            when (key)
             {
-                KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D ->
+                KeyboardKey.W, KeyboardKey.A, KeyboardKey.S, KeyboardKey.D ->
                 {
-                    if (!heldDirections.contains(e.keyCode))
+                    if (!heldDirections.contains(key))
                     {
-                        queuedDirections.add(e.keyCode)
-                        heldDirections.add(e.keyCode)
+                        queuedDirections.add(key)
+                        heldDirections.add(key)
                     }
                 }
-                KeyEvent.VK_SHIFT ->
+                KeyboardKey.LEFT_SHIFT, KeyboardKey.RIGHT_SHIFT ->
                 {
-                    heldModifiers.add(e.keyCode)
+                    heldModifiers.add(key)
                 }
             }
         }
 
-        override fun keyReleased(e: KeyEvent)
+        override fun keyUp(key: KeyboardKey, modifiers: Set<ModifierKey>)
         {
-            when (e.keyCode)
+            when (key)
             {
-                KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D ->
+                KeyboardKey.W, KeyboardKey.A, KeyboardKey.S, KeyboardKey.D ->
                 {
-                    heldDirections.remove(e.keyCode)
+                    heldDirections.remove(key)
                 }
-                KeyEvent.VK_SHIFT ->
+                KeyboardKey.LEFT_SHIFT, KeyboardKey.RIGHT_SHIFT ->
                 {
-                    heldModifiers.remove(e.keyCode)
+                    heldModifiers.remove(key)
                 }
             }
         }

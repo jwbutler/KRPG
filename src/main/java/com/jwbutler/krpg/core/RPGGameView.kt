@@ -1,5 +1,7 @@
 package com.jwbutler.krpg.core
 
+import com.jwbutler.gameengine.geometry.Dimensions
+import com.jwbutler.gameengine.geometry.Pixel
 import com.jwbutler.krpg.behavior.commands.BashCommand
 import com.jwbutler.krpg.behavior.commands.DirectionalAttackCommand
 import com.jwbutler.krpg.behavior.commands.MoveCommand
@@ -15,8 +17,6 @@ import com.jwbutler.rpglib.core.GameState
 import com.jwbutler.rpglib.core.GameView
 import com.jwbutler.rpglib.entities.TileOverlay
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.geometry.Dimensions
-import com.jwbutler.rpglib.geometry.Pixel
 import com.jwbutler.rpglib.graphics.Renderable
 
 class RPGGameView : GameView

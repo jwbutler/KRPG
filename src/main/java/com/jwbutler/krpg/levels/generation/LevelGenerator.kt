@@ -1,11 +1,12 @@
 package com.jwbutler.krpg.levels.generation
 
+import com.jwbutler.gameengine.geometry.Dimensions
+import com.jwbutler.gameengine.geometry.Rectangle
 import com.jwbutler.krpg.entities.objects.Wall
 import com.jwbutler.krpg.entities.tiles.RPGTileType
 import com.jwbutler.rpglib.entities.objects.GameObject
 import com.jwbutler.rpglib.entities.tiles.Tile
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.geometry.Dimensions
 import com.jwbutler.rpglib.geometry.IntPair
 import com.jwbutler.rpglib.levels.Level
 import com.jwbutler.rpglib.levels.VictoryCondition
@@ -28,18 +29,6 @@ interface LevelGenerator
     {
         fun create(): LevelGenerator = LevelGeneratorImpl()
     }
-}
-
-private data class Rectangle
-(
-    val left: Int,
-    val top: Int,
-    val width: Int,
-    val height: Int
-)
-{
-    val right = left + width - 1
-    val bottom = top + height - 1
 }
 
 private enum class Orientation
@@ -90,7 +79,8 @@ private class LevelGeneratorImpl : LevelGenerator
         victoryCondition: VictoryCondition
     ): Level
     {
-        val (width, height) = dimensions
+        val width = dimensions.width
+        val height = dimensions.height
 
         val sections = _generateSections(0, 0, width, height)
         val tiles = mutableMapOf<Coordinates, Tile>()
@@ -100,14 +90,12 @@ private class LevelGeneratorImpl : LevelGenerator
         {
             for (coordinates in _getBorder(room))
             {
-                tiles[coordinates] =
-                    Tile(RPGTileType.STONE, coordinates)
+                tiles[coordinates] = Tile(RPGTileType.STONE, coordinates)
                 objects.computeIfAbsent(coordinates, { mutableListOf() }) += Wall()
             }
             for (coordinates in _getInterior(room))
             {
-                tiles[coordinates] =
-                    Tile(RPGTileType.STONE, coordinates)
+                tiles[coordinates] = Tile(RPGTileType.STONE, coordinates)
             }
         }
 
@@ -116,8 +104,7 @@ private class LevelGeneratorImpl : LevelGenerator
             val connectionCoordinates = _getConnectionCoordinates(sections, connection)
             for (coordinates in connectionCoordinates)
             {
-                tiles[coordinates] =
-                    Tile(RPGTileType.GRASS, coordinates)
+                tiles[coordinates] = Tile(RPGTileType.GRASS, coordinates)
                 objects.remove(coordinates)
             }
         }
@@ -350,8 +337,8 @@ private class LevelGeneratorImpl : LevelGenerator
 
     private fun _getBorder(room: Rectangle): Set<Coordinates>
     {
-        val (left, top) = room
-        // Ugh, Kotlin destructuring sucks
+        val left = room.left
+        val top = room.top
         val right = room.right
         val bottom = room.bottom
 
@@ -371,8 +358,8 @@ private class LevelGeneratorImpl : LevelGenerator
 
     private fun _getInterior(room: Rectangle): Set<Coordinates>
     {
-        val (left, top) = room
-        // Ugh, Kotlin destructuring sucks
+        val left = room.left
+        val top = room.top
         val right = room.right
         val bottom = room.bottom
 

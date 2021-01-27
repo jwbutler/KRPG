@@ -1,5 +1,8 @@
 package com.jwbutler.krpg.levels
 
+import com.jwbutler.gameengine.graphics.Color
+import com.jwbutler.gameengine.graphics.ImageLoader
+import com.jwbutler.krpg.core.Singletons
 import com.jwbutler.krpg.entities.objects.Tree
 import com.jwbutler.krpg.entities.objects.Wall
 import com.jwbutler.krpg.entities.objects.WallTop
@@ -10,12 +13,10 @@ import com.jwbutler.rpglib.entities.objects.GameObject
 import com.jwbutler.rpglib.entities.tiles.Tile
 import com.jwbutler.rpglib.entities.units.Unit
 import com.jwbutler.rpglib.geometry.Coordinates
-import com.jwbutler.rpglib.graphics.images.Colors
-import com.jwbutler.rpglib.graphics.images.ImageLoader
+import com.jwbutler.krpg.graphics.Colors
 import com.jwbutler.rpglib.levels.Level
 import com.jwbutler.rpglib.levels.VictoryCondition
 import com.jwbutler.rpglib.players.Player
-import java.awt.Color
 
 // TODO: Lots of hardcoded color values here.
 // In the future these will be specified individually for each level.
@@ -41,7 +42,7 @@ object BitmapLevelCreator
     ): Level
     {
         val fullFilename = "levels/${filename}"
-        val image = ImageLoader.getInstance().loadImage(fullFilename)
+        val image = Singletons.get(ImageLoader::class.java).loadImage(fullFilename, null)
 
         val tiles = mutableMapOf<Coordinates, Tile>()
         val objects = mutableMapOf<Coordinates, Collection<GameObject>>()
@@ -53,12 +54,11 @@ object BitmapLevelCreator
             for (x in 0 until image.width)
             {
                 val coordinates = Coordinates(x, y)
-                val color = Color(image.getRGB(x, y))
+                val color = image.getColor(x, y)
                 val tileType = _getTile(color, baseTileType)
                 if (tileType != null)
                 {
-                    tiles[coordinates] =
-                        Tile(tileType, coordinates)
+                    tiles[coordinates] = Tile(tileType, coordinates)
                 }
 
                 val `object` = _getObject(color)

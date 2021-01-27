@@ -1,9 +1,10 @@
 package com.jwbutler.krpg.entities.equipment
 
+import com.jwbutler.gameengine.graphics.PaletteSwaps
+import com.jwbutler.krpg.graphics.Colors
 import com.jwbutler.krpg.graphics.sprites.ShieldSprite
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
 
-class Shield : AbstractEquipment(ShieldSprite(PaletteSwaps.WHITE_TRANSPARENT))
+class Shield : AbstractEquipment(ShieldSprite(PaletteSwaps().withTransparentColor(Colors.WHITE)))
 {
     override val slot = RPGEquipmentSlot.OFF_HAND
 }

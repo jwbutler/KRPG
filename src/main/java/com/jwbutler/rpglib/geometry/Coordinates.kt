@@ -1,5 +1,6 @@
 package com.jwbutler.rpglib.geometry
 
+import com.jwbutler.gameengine.geometry.Pixel
 import com.jwbutler.rpglib.core.GameState
 
 data class Coordinates(override val x: Int, override val y: Int) : IntPair

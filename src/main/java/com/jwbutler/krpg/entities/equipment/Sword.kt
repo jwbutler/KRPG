@@ -1,9 +1,10 @@
 package com.jwbutler.krpg.entities.equipment
 
+import com.jwbutler.gameengine.graphics.PaletteSwaps
+import com.jwbutler.krpg.graphics.Colors
 import com.jwbutler.krpg.graphics.sprites.SwordSprite
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
 
-class Sword : AbstractEquipment(SwordSprite(PaletteSwaps.WHITE_TRANSPARENT))
+class Sword : AbstractEquipment(SwordSprite(PaletteSwaps().withTransparentColor(Colors.WHITE)))
 {
     override val slot = RPGEquipmentSlot.MAIN_HAND
 }

@@ -1,7 +1,7 @@
 package com.jwbutler.rpglib.graphics
 
-import com.jwbutler.rpglib.geometry.Pixel
-import com.jwbutler.rpglib.graphics.images.Image
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.graphics.Image
 
 /**
  * Represents an image and all data directly necessary to render it.

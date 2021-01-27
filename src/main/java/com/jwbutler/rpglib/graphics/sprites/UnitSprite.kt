@@ -1,5 +1,9 @@
 package com.jwbutler.rpglib.graphics.sprites
 
+import com.jwbutler.gameengine.geometry.Pixel
+import com.jwbutler.gameengine.graphics.ImageLoader
+import com.jwbutler.gameengine.graphics.PaletteSwaps
+import com.jwbutler.krpg.core.Singletons
 import com.jwbutler.rpglib.behavior.Activity
 import com.jwbutler.rpglib.entities.Entity
 import com.jwbutler.rpglib.entities.units.Unit
@@ -7,8 +11,6 @@ import com.jwbutler.rpglib.geometry.Direction
 import com.jwbutler.rpglib.graphics.FrameKey
 import com.jwbutler.rpglib.graphics.RenderLayer
 import com.jwbutler.rpglib.graphics.Renderable
-import com.jwbutler.rpglib.graphics.images.ImageLoader
-import com.jwbutler.rpglib.graphics.images.PaletteSwaps
 
 abstract class UnitSprite
 (
@@ -22,13 +24,10 @@ abstract class UnitSprite
         val coordinates = unit.getCoordinates()
         val frame = _getFrame(unit.getActivity(), unit.getDirection(), unit.getFrameNumber())
         val filename = _formatFilename(frame)
-        val image = ImageLoader.getInstance().loadImage(filename, paletteSwaps)
-        val pixel = coordinates.toPixel() + offsets
-        return Renderable(
-            image,
-            pixel,
-            RenderLayer.UNIT
-        )
+        val image = Singletons.get(ImageLoader::class.java).loadImage(filename, paletteSwaps)
+        val pixel = coordinates.toPixel() + Pixel(offsets.x, offsets.y) // TODO second term shouldn't be a Pixel
+
+        return Renderable(image, pixel, RenderLayer.UNIT)
     }
 
     fun isAnimationComplete(unit: Unit): Boolean
